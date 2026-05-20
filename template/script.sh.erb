@@ -21,11 +21,14 @@ module list
 <%- end -%>
 
 # Benchmark info
-echo "TIMING - Starting QuPath at: $(date)"
+echo "TIMING - Starting Fiji at: $(date)"
 
-# Launch QuPath using xpra
+# Launch Fiji using xpra
 set -x
-apptainer exec ${CONTAINER} xpra start \
+export JAVA_TOOL_OPTIONS="-Djava.util.prefs.userRoot=$HOME/.xpra"
+apptainer exec \
+    --env "JAVA_TOOL_OPTIONS=$JAVA_TOOL_OPTIONS" \
+    ${CONTAINER} xpra start \
     --minimal=yes \
     --bind-tcp=0.0.0.0:${PORT},auth=file,filename=${PASSWORD_FILE} \
     --websocket-upgrade=yes \
@@ -33,7 +36,7 @@ apptainer exec ${CONTAINER} xpra start \
     --opengl=yes \
     --html=on \
     --compression-level=1 \
-    --start="/QuPath/bin/QuPath -Dqupath.prefs.name=myPrefs" \
+    --start="fiji" \
     --exit-with-windows=yes \
     --daemon=no \
     --clipboard=yes \
